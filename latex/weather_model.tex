@@ -56,43 +56,6 @@ The autocorrelation of the daily temperatures is given in Figure~\ref{fig:analyi
 
 This suggests we may be able to model the temperatures using a low-frequency determistic component plus a ``white''-noise stochastic process.
 
-\begin{figure}[H]
-  \centering
-  \begin{subfigure}[b]{0.45\textwidth}
-    \includegraphics[width=\textwidth]{figures/average_daily_temp.pdf}
-    \label{fig:analysis-raw}
-    \caption{Average Daily Temperature}
-  \end{subfigure}
-  ~
-  \begin{subfigure}[b]{0.45\textwidth}
-    \includegraphics[width=\textwidth]{figures/average_daily_temp_hist.pdf}
-    \caption{Histogram of Temperatures}
-  \end{subfigure}
-  ~
-  \begin{subfigure}[b]{0.45\textwidth}
-    \includegraphics[width=\textwidth]{figures/average_daily_temp_fft.pdf}
-    \label{fig:analysis-ft}
-    \caption{Frequency Spectrum}
-  \end{subfigure}
-  ~
-  \begin{subfigure}[b]{0.45\textwidth}
-    \includegraphics[width=\textwidth]{figures/average_daily_temp_autocorr.pdf}
-    \caption{\label{fig:analysis-autocorr} Autocorrelation}
-  \end{subfigure}
-  ~
-  \begin{subfigure}[b]{0.45\textwidth}
-    \includegraphics[width=\textwidth]{figures/average_daily_vel.pdf}
-    \caption{\label{fig:analysis-autocorr} Derivative ($dT/dt$) of Temperature}
-  \end{subfigure}
-  ~
-  \begin{subfigure}[b]{0.45\textwidth}
-    \includegraphics[width=\textwidth]{figures/average_daily_vel_hist.pdf}
-    \caption{\label{fig:analysis-autocorr} Histogram of Derivative ($dT/dt$) of Temperature}
-  \end{subfigure}
-  \label{fig:analysis}
-  \caption{}
-\end{figure}
-
 \begin{table}[H]
   \centering
   \begin{tabular}{c c c c} \hline
@@ -169,6 +132,11 @@ where $\Delta t$ is the time step (one day) and $X_t \sim N(0, \sigma^2)$.
     \includegraphics[width=\textwidth]{figures/sim_temp.pdf}
     \label{fig:analysis-raw}
     \caption{Average Daily Temperature}
+  \end{subfigure}
+  ~
+  \begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{figures/sim_temp_hist.pdf}
+    \caption{Histogram of Temperatures}
   \end{subfigure}
   ~
   \begin{subfigure}[b]{0.45\textwidth}
@@ -263,7 +231,7 @@ s(t) = 10.0 \, (1 - r(T_t)) \, P_t
   \end{subfigure}
   ~
   \begin{subfigure}[b]{0.45\textwidth}
-    \includegraphics[width=\textwidth]{figures/daily_snowfall_hist.pdf}
+    \includegraphics[width=\textwidth]{figures/daily_snowfall_hist}
     \caption{Daily Snowfall Histogram}
   \end{subfigure}
   

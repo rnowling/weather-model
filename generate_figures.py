@@ -43,17 +43,6 @@ def plot_sim_autocorr(flname, temps, sim_temps):
 	plt.xlim([0, len(temps)])
 	plt.savefig(flname, DPI=300)
 
-def plot_fft(flname, series):
-	freq, amplitudes = fft(series)
-
-	n_samples = len(series)
-	plt.clf()
-	plt.plot(freq[1:(n_samples+1)/2], amplitudes[1:(n_samples+1)/2], color="c")
-	plt.xlabel("Frequency (cycles/day)", fontsize=16)
-	plt.ylabel("Amplitude", fontsize=16)
-	plt.xlim([0, 0.05])
-	plt.savefig(flname, DPI=300)
-
 def plot_sim_fft(flname, real, simulated):
 	real_freq, real_amplitudes = fft(real)
 	sim_freq, sim_amp = fft(simulated)
@@ -68,14 +57,6 @@ def plot_sim_fft(flname, real, simulated):
 	plt.ylabel("Amplitude", fontsize=16)
 	plt.legend(loc="upper right")
 	plt.xlim([0, 0.05])
-	plt.savefig(flname, DPI=300)
-
-def plot_temps(flname, temps):
-	plt.clf()
-	plt.plot(temps, color="c")
-	plt.xlabel("Time (Days)", fontsize=16)
-	plt.ylabel("Temperature (F)", fontsize=16)
-	plt.xlim([0, len(temps)])
 	plt.savefig(flname, DPI=300)
 
 def plot_sim_vel(flname, vel, sim_vel):
@@ -95,14 +76,6 @@ def plot_vel(flname, vel):
 	plt.xlabel("Time (Days)", fontsize=16)
 	plt.ylabel("dT/dt (F)", fontsize=16)
 	plt.xlim([0, len(vel)])
-	plt.savefig(flname, DPI=300)
-
-def plot_hist_vel(flname, vel):
-	plt.clf()
-	plt.hist(vel, color="c")
-	plt.ylabel("Occurrences (Days)", fontsize=16)
-	plt.xlabel("dT/dt (F)", fontsize=16)
-	#plt.xlim([0, len(vel)])
 	plt.savefig(flname, DPI=300)
 
 def plot_hist_sim_vel(flname, vel, sim_vel):
@@ -126,11 +99,14 @@ def plot_sim_temps(flname, temps, sim_temps):
 	plt.legend(fontsize=14)
 	plt.savefig(flname, DPI=300)
 
-def hist_temps(flname, temps):
+def hist_temps(flname, temps, sim_temps):
 	plt.clf()
-	plt.hist(temps, bins=50, color="c")
+	plt.hold(True)
+	plt.hist(temps, bins=50, color="c", label="Real")
+	plt.hist(sim_temps, bins=50, color="k", alpha=0.7, label="Simulated")
 	plt.ylabel("Occurrences (Days)", fontsize=16)
 	plt.xlabel("Temperature (F)", fontsize=16)
+	plt.legend(loc="upper right")
 	plt.savefig(flname, DPI=300)
 
 def plot_weather_quality_temp(flname):
@@ -151,7 +127,7 @@ def plot_hist_quality_temp(flname, temps, sim_temps):
 
 	counts, bins = np.histogram(weather_quality_temp(temps), bins=10)
 	counts = counts / float(sum(counts))
-	plt.plot(bins[:-1], counts, color="r", label="Observed")
+	plt.plot(bins[:-1], counts, color="r", label="Real")
 
 	counts, bins = np.histogram(weather_quality_temp(sim_temps), bins=10)
 	counts = counts / float(sum(counts))
@@ -167,8 +143,8 @@ def plot_hist_quality_temp(flname, temps, sim_temps):
 def plot_precip(flname, precip, sim_precip):
 	plt.clf()
 	plt.hold(True)
-	plt.plot(precip[:, 2], color="r", label="Observed")
-	plt.plot(sim_precip, color="g", label="Simulated")
+	plt.plot(precip[:, 2], color="c", label="Real")
+	plt.plot(sim_precip, color="k", label="Simulated")
 	plt.xlabel("Time (Days)", fontsize=16)
 	plt.ylabel("Total Precipitation (in)", fontsize=16)
 	plt.legend()
@@ -178,11 +154,8 @@ def plot_hist_precip(flname, precip, sim_precip):
 	plt.clf()
 	plt.hold(True)
 
-	counts, bins = np.histogram(precip[:, 2], bins=30)
-	plt.plot(bins[:-1], counts, color="r", label="Observed")
-
-	counts, bins = np.histogram(sim_precip, bins=30)
-	plt.plot(bins[:-1], counts, color="g", label="Simulated")
+	plt.hist(precip[:, 2], bins=30, color="c", label="Real")
+	plt.hist(sim_precip, bins=30, color="k", alpha=0.7, label="Simulated")
 
 	plt.ylabel("Occurrences (Days)", fontsize=16)
 	plt.xlabel("Total Precipitation (in)", fontsize=16)
@@ -203,7 +176,7 @@ def plot_hist_snowfall(flname, precip, sim_snowfall):
 	plt.hold(True)
 
 	counts, bins = np.histogram(precip[:, 0], bins=30)
-	plt.plot(bins[:-1], counts, color="r", label="Observed")
+	plt.plot(bins[:-1], counts, color="r", label="Real")
 
 	counts, bins = np.histogram(sim_snowfall, bins=30)
 	plt.plot(bins[:-1], counts, color="g", label="Simulated")
@@ -217,8 +190,8 @@ def plot_hist_snowfall(flname, precip, sim_snowfall):
 def plot_snowfall(flname, precip, sim_snowfall):
 	plt.clf()
 	plt.hold(True)
-	plt.plot(sim_snowfall, color="g", alpha=0.7, label="Simulated")
-	plt.plot(precip[:, 0], color="r", alpha=0.7, label="Observed")
+	plt.plot(precip[:, 0], color="c", alpha=0.7, label="Real")
+	plt.plot(sim_snowfall, color="k", alpha=0.7, label="Simulated")
 	plt.xlabel("Time (Days)", fontsize=16)
 	plt.ylabel("Total Snowfall (in)", fontsize=16)
 	plt.legend()
@@ -228,12 +201,11 @@ def plot_weather_quality_snowfall(flname):
 	plt.clf()
 	snowfall = np.linspace(0.0, 3.0, 60.0)
 	quality = weather_quality_snow(snowfall)
-	plt.plot(snowfall, quality, color="r")
+	plt.plot(snowfall, quality, color="c")
 	plt.grid(True)
 	plt.xlabel("Snowfall (in)", fontsize=16)
 	plt.ylabel("Quality", fontsize=16)
 	plt.ylim([0.0, 1.0])
-	plt.legend()
 	plt.savefig(flname, DPI=300)
 
 def plot_hist_quality_snowfall(flname, precip, sim_snowfall):
@@ -242,11 +214,11 @@ def plot_hist_quality_snowfall(flname, precip, sim_snowfall):
 
 	counts, bins = np.histogram(weather_quality_snow(precip[:, 0]), bins=10)
 	counts = counts / float(sum(counts))
-	plt.plot(bins[:-1], counts, color="r", label="Observed")
+	plt.plot(bins[:-1], counts, color="c", label="Real")
 
 	counts, bins = np.histogram(weather_quality_snow(sim_snowfall), bins=10)
 	counts = counts / float(sum(counts))
-	plt.plot(bins[:-1], counts, color="g", label="Simulated")
+	plt.plot(bins[:-1], counts, color="k", label="Simulated")
 
 	plt.ylabel("Days (Frequency)", fontsize=16)
 	plt.xlabel("Quality", fontsize=16)
@@ -278,9 +250,9 @@ def plot_scatter_temp_precip(flname, temp, precip):
 def plot_wind_speed(flname, wind_speed, sim_wind_speed=None):
 	plt.clf()
 	plt.hold(True)
-	plt.plot(wind_speed, color="r", label="Observed")
+	plt.plot(wind_speed, color="c", label="Real")
 	if sim_wind_speed != None:
-		plt.plot(sim_wind_speed, color="g", label="Simulated")
+		plt.plot(sim_wind_speed, color="k", label="Simulated")
 	plt.xlabel("Time (Days)", fontsize=16)
 	plt.ylabel("Wind Speed (mph)", fontsize=16)
 	plt.legend()
@@ -290,10 +262,10 @@ def plot_hist_wind_speed(flname, wind_speed, sim_wind_speed=None):
 	plt.clf()
 	plt.hold(True)
 
-	plt.hist(wind_speed, bins=30, color="r", alpha=0.7, label="Observed")
+	plt.hist(wind_speed, bins=30, color="c", alpha=0.7, label="Real")
 
 	if sim_wind_speed != None:
-		plt.hist(sim_wind_speed, bins=30, color="g", alpha=0.7, label="Simulated")
+		plt.hist(sim_wind_speed, bins=30, color="k", alpha=0.7, label="Simulated")
 
 	plt.ylabel("Occurrences (Days)", fontsize=16)
 	plt.xlabel("Wind Speed (mph)", fontsize=16)
@@ -305,7 +277,7 @@ def plot_wind_speed_fft(flname, real, simulated=None):
 	n_real_samples = len(real)
 	plt.clf()
 	plt.hold(True)
-	plt.plot(real_freq[1:(n_real_samples+1)/2], real_amplitudes[1:(n_real_samples+1)/2], color="r", label="Real")
+	plt.plot(real_freq[1:(n_real_samples+1)/2], real_amplitudes[1:(n_real_samples+1)/2], color="c", label="Real")
 	
 	if simulated != None:
 		sim_freq, sim_amp = fft(simulated)
@@ -339,16 +311,7 @@ std = 1.25 * np.std(vel)
 sim_temps =  simulate_temp(avg, std, 1.0, len(temps))
 sim_vel = sim_temps[1:] - sim_temps[:len(sim_temps) - 1]
 
-
-"""
-plot_temps(output_dir + "/average_daily_temp.pdf", temps)
-plot_vel(output_dir + "/average_daily_vel.pdf", vel)
-plot_hist_vel(output_dir + "/average_daily_vel_hist.pdf", vel)
-hist_temps(output_dir + "/average_daily_temp_hist.pdf", temps)
-plot_fft(output_dir + "/average_daily_temp_fft.pdf", temps)
-plot_autocorr(output_dir + "/average_daily_temp_autocorr.pdf", temps)
-"""
-
+hist_temps(output_dir + "/sim_temp_hist.pdf", temps, sim_temps)
 plot_sim_temps(output_dir + "/sim_temp.pdf", temps, sim_temps)
 plot_sim_vel(output_dir + "/sim_vel.pdf", vel, sim_vel)
 plot_hist_sim_vel(output_dir + "/sim_vel_hist.pdf", vel, sim_vel)
