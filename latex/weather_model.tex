@@ -149,7 +149,7 @@ Based on the properties observed in Section~\ref{sec:analysis}, we can derive a 
 \end{table}
 
 
-\subsection{Implementation of the Model}
+\subsubsection{Implementation of the Model}
 In implementing the model, we made several decisions.  We decided to use only one Fourier term ($k=1$) with a period $P$ of 365.0 days.  We determined the values of the coefficients $a_0$, $a_1$, and $b_1$ from a Fourier Transform of the real data.  We set the long-term mean $\mu$ to 0 and determined the variance $\sigma^2$ from the distribution of the derivative of the real temperature data.
 
 We chose to numerically integrate the Orstein-Uhlenbeck process $Z(t)$ using the Euler-Maruyama method:

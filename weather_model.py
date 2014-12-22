@@ -46,6 +46,7 @@ def simulate_wind_speed(avg, k, theta, steps):
 	return np.array(sim_wind_speed)
 
 def wind_chill_model(temp, wind_speed):
+	# source: http://www.nws.noaa.gov/om/winter/windchill.shtml
 	v_16 = np.pow(wind_speed, 0.16)
 	wc = 35.74 + 0.6215 * temp - 35.74 * v_16 + 0.4275 * temp * v_16
 	return wc
