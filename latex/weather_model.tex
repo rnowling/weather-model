@@ -118,7 +118,7 @@ In implementing the model, we made several decisions.  We decided to use only on
 We chose to numerically integrate the Orstein-Uhlenbeck process $Z(t)$ using the Euler-Maruyama method:
 
 \begin{align}
-&Z_{t+1} = - \theta Z_t \Delta t + \sqrt{\sigma \Delta t} X_{t+1} \\
+&Z_{t+1} = - \theta Z_t \Delta t + \sigma \sqrt{\Delta t} X_{t+1} \\
 &Z_0 = 0
 \end{align}
 
@@ -220,11 +220,6 @@ s(t) = 10.0 \, (1 - r(T_t)) \, P_t
   \end{subfigure}
   ~
   \begin{subfigure}[b]{0.45\textwidth}
-    \includegraphics[width=\textwidth]{figures/daily_temp_precip_scatter.pdf}
-    \caption{Temperature-Precipitation Scatter}
-  \end{subfigure}
-  ~
-  \begin{subfigure}[b]{0.45\textwidth}
     \includegraphics[width=\textwidth]{figures/daily_snowfall.pdf}
     \label{fig:analysis-raw}
     \caption{Daily Snowfall}
@@ -234,8 +229,32 @@ s(t) = 10.0 \, (1 - r(T_t)) \, P_t
     \includegraphics[width=\textwidth]{figures/daily_snowfall_hist}
     \caption{Daily Snowfall Histogram}
   \end{subfigure}
-  
+  ~
+  \begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{figures/daily_rainfall.pdf}
+    \label{fig:analysis-raw}
+    \caption{Daily Rainfall}
+  \end{subfigure}
+  ~
+  \begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{figures/daily_rainfall_hist}
+    \caption{Daily Rainfall Histogram}
+  \end{subfigure}
   \label{fig:analysis}
+  \caption{}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{figures/daily_temp_precip_scatter.pdf}
+    \caption{Temperature-Precipitation Scatter}
+  \end{subfigure}
+  ~
+  \begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{figures/daily_wind_chill_precip_scatter.pdf}
+    \caption{Wind Chill-Precipitation Scatter}
+  \end{subfigure}
   \caption{}
 \end{figure}
 
@@ -327,29 +346,63 @@ q_s(s) = 1 - \frac{1 - c}{1 + \exp(-a (s - b))}
 \begin{figure}[H]
   \centering
   \begin{subfigure}[b]{0.45\textwidth}
-    \includegraphics[width=\textwidth]{figures/temp_quality.pdf}
+    \includegraphics[width=\textwidth]{figures/wind_chill_trans_prob.pdf}
     \label{fig:analysis-raw}
-    \caption{Temperature Quality}
+    \caption{Wind Chill Transaction Probabilities}
   \end{subfigure}
   ~
   \begin{subfigure}[b]{0.45\textwidth}
-    \includegraphics[width=\textwidth]{figures/daily_temp_quality_hist.pdf}
-    \caption{Temperature Quality Histogram}
+    \includegraphics[width=\textwidth]{figures/wind_chill_trans_prob_hist.pdf}
+    \caption{Wind Chill Trans. Prob. Histogram}
   \end{subfigure}
   ~
   \begin{subfigure}[b]{0.45\textwidth}
-    \includegraphics[width=\textwidth]{figures/weather_quality.pdf}
+    \includegraphics[width=\textwidth]{figures/snowfall_trans_prob.pdf}
     \label{fig:analysis-raw}
-    \caption{Snowfall Quality}
+    \caption{Snowfall Transaction Probability}
   \end{subfigure}
   ~
   \begin{subfigure}[b]{0.45\textwidth}
-    \includegraphics[width=\textwidth]{figures/daily_snowfall_quality_hist.pdf}
-    \caption{Snowfall Quality Histogram}
+    \includegraphics[width=\textwidth]{figures/snowfall_trans_prob_hist.pdf}
+    \caption{Snowfall Trans. Prob. Histogram}
+  \end{subfigure}
+  ~
+  \begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{figures/rainfall_trans_prob.pdf}
+    \label{fig:analysis-raw}
+    \caption{Rainfall Transaction Probability}
+  \end{subfigure}
+  ~
+  \begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{figures/rainfall_trans_prob_hist.pdf}
+    \caption{Rainfall Trans. Prob. Histogram}
   \end{subfigure}
   \label{fig:analysis}
   \caption{}
 \end{figure}
+
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{figures/wind_speed_trans_prob.pdf}
+    \label{fig:analysis-raw}
+    \caption{Wind Speed Transaction Probability}
+  \end{subfigure}
+  ~
+  \begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{figures/wind_speed_trans_prob_hist.pdf}
+    \caption{Wind Speed Trans. Prob. Histogram}
+  \end{subfigure}
+  ~
+  \begin{subfigure}[b]{0.45\textwidth}
+    \includegraphics[width=\textwidth]{figures/weather_trans_prob.pdf}
+    \caption{Weather Trans. Prob.}
+  \end{subfigure}
+  \label{fig:analysis}
+  \caption{}
+\end{figure}
+
+
 
 \textcolor{red}{TODO quality vs day, total precipitation, windchill}
 
