@@ -109,8 +109,9 @@ def plot_hist_precip(flname, precip, sim_precip):
 	plt.clf()
 	plt.hold(True)
 
-	plt.hist(precip[:, 2], bins=30, color="c", label="Real")
-	plt.hist(sim_precip, bins=30, color="k", alpha=0.7, label="Simulated")
+	bins = np.linspace(0.0, 2.0, 20.0)
+	plt.hist(precip[:, 2], bins=bins, color="c", label="Real")
+	plt.hist(sim_precip, bins=bins, color="k", alpha=0.7, label="Simulated")
 
 	plt.ylabel("Occurrences (Days)", fontsize=16)
 	plt.xlabel("Total Precipitation (in)", fontsize=16)
@@ -132,8 +133,9 @@ def plot_hist_snowfall(flname, precip, sim_snowfall):
 	plt.clf()
 	plt.hold(True)
 
-	plt.hist(precip[:, 0], bins=30, color="c", alpha=0.7, label="Real")
-	plt.hist(sim_snowfall, bins=30, color="k", alpha=0.7, label="Simulated")
+	bins = np.linspace(0.0, 16.0, 32.0)
+	plt.hist(precip[:, 0], bins=bins, color="c", alpha=0.7, label="Real")
+	plt.hist(sim_snowfall, bins=bins, color="k", alpha=0.7, label="Simulated")
 
 	plt.ylabel("Occurrences (Days)", fontsize=16)
 	plt.xlabel("Snowfall (in)", fontsize=16)
@@ -155,8 +157,9 @@ def plot_hist_rainfall(flname, precip, sim_rainfall):
 	plt.clf()
 	plt.hold(True)
 
-	plt.hist(precip[:, 1], bins=30, color="c", alpha=0.7, label="Real")
-	plt.hist(sim_rainfall, bins=30, color="k", alpha=0.7, label="Simulated")
+	bins = np.linspace(0.0, 3.0, 30.0)
+	plt.hist(precip[:, 1], bins=bins, color="c", alpha=0.7, label="Real")
+	plt.hist(sim_rainfall, bins=bins, color="k", alpha=0.7, label="Simulated")
 
 	plt.ylabel("Occurrences (Days)", fontsize=16)
 	plt.xlabel("Rainfall (in)", fontsize=16)
@@ -183,8 +186,9 @@ def plot_wind_chill_prob_hist(flname, temps, sim_temps):
 	wc_prob = wind_chill_transaction_probability(temps)
 	sim_wc_prob = wind_chill_transaction_probability(sim_temps)
 
-	plt.hist(wc_prob, bins=10, color="c", label="Real")
-	plt.hist(sim_wc_prob, bins=10, color="k", alpha = 0.7, label="Simulated")
+	bins = np.linspace(0.0, 1.0, 20.0)
+	plt.hist(wc_prob, bins=bins, color="c", label="Real")
+	plt.hist(sim_wc_prob, bins=bins, color="k", alpha = 0.7, label="Simulated")
 
 	plt.ylabel("Frequency", fontsize=16)
 	plt.xlabel("Probability", fontsize=16)
@@ -208,8 +212,9 @@ def plot_hist_snowfall_trans_prob(flname, precip, sim_snowfall):
 	plt.clf()
 	plt.hold(True)
 
-	plt.hist(snowfall_transaction_probability(precip[:, 0]), bins=10, color="c", alpha=0.7, label="Real")
-	plt.hist(snowfall_transaction_probability(sim_snowfall), bins=10, color="k", alpha=0.7, label="Simulated")
+	bins = np.linspace(0.0, 1.0, 20.0)
+	plt.hist(snowfall_transaction_probability(precip[:, 0]), bins=bins, color="c", alpha=0.7, label="Real")
+	plt.hist(snowfall_transaction_probability(sim_snowfall), bins=bins, color="k", alpha=0.7, label="Simulated")
 
 	plt.ylabel("Days (Frequency)", fontsize=16)
 	plt.xlabel("Probability", fontsize=16)
@@ -233,10 +238,9 @@ def plot_hist_rainfall_trans_prob(flname, precip, sim_rainfall):
 	plt.clf()
 	plt.hold(True)
 
-	print sim_rainfall
-	print rainfall_transaction_probability(sim_rainfall)
-	plt.hist(rainfall_transaction_probability(precip[:, 1]), bins=10, color="c", alpha=0.7, label="Real")
-	plt.hist(rainfall_transaction_probability(sim_rainfall), bins=10, color="k", alpha=0.7, label="Simulated")
+	bins = np.linspace(0.0, 1.0, 20.0)
+	plt.hist(rainfall_transaction_probability(precip[:, 1]), bins=bins, color="c", alpha=0.7, label="Real")
+	plt.hist(rainfall_transaction_probability(sim_rainfall), bins=bins, color="k", alpha=0.7, label="Simulated")
 
 	plt.ylabel("Days (Frequency)", fontsize=16)
 	plt.xlabel("Probability", fontsize=16)
@@ -322,8 +326,9 @@ def plot_hist_wind_speed_trans_prob(flname, wind_speed, sim_wind_speed):
 	plt.clf()
 	plt.hold(True)
 
-	plt.hist(wind_speed_transaction_probability(wind_speed), bins=10, color="c", alpha=0.7, label="Real")
-	plt.hist(wind_speed_transaction_probability(sim_wind_speed), bins=10, color="k", alpha=0.7, label="Simulated")
+	bins = np.linspace(0.0, 1.0, 20.0)
+	plt.hist(wind_speed_transaction_probability(wind_speed), bins=bins, color="c", alpha=0.7, label="Real")
+	plt.hist(wind_speed_transaction_probability(sim_wind_speed), bins=bins, color="k", alpha=0.7, label="Simulated")
 
 	plt.ylabel("Days (Frequency)", fontsize=16)
 	plt.xlabel("Probability", fontsize=16)
@@ -332,13 +337,29 @@ def plot_hist_wind_speed_trans_prob(flname, wind_speed, sim_wind_speed):
 	plt.legend(loc="upper left")
 	plt.savefig(flname, DPI=300)
 
-def plot_weather_probability(flname, wind_chill, wind_speed, snowfall, rainfall):
+def plot_weather_probability(flname, wind_chill, wind_speed, snowfall, rainfall, sim_wind_chill, sim_wind_speed, sim_snowfall, sim_rainfall):
 	plt.clf()
-	plt.plot(weather_transaction_probability(wind_chill, wind_speed, snowfall, rainfall))
+	plt.hold(True)
+	plt.plot(weather_transaction_probability(wind_chill, wind_speed, snowfall, rainfall), color="c", label="Real")
+	plt.plot(weather_transaction_probability(sim_wind_chill, sim_wind_speed, sim_snowfall, sim_rainfall), color="k", alpha=0.7, label="Simulated")
 	plt.xlabel("Time (Days)", fontsize=16)
 	plt.ylabel("Probability", fontsize=16)
 	plt.ylim([0.0, 1.0])
 	plt.grid(True)
+	plt.legend(loc="lower left")
+	plt.savefig(flname, DPI=300)
+
+def plot_weather_prob_hist(flname, wind_chill, wind_speed, snowfall, rainfall, sim_wind_chill, sim_wind_speed, sim_snowfall, sim_rainfall):
+	plt.clf()
+	plt.hold(True)
+	bins = np.linspace(0.0, 1.0, 20.0)
+	plt.hist(weather_transaction_probability(wind_chill, wind_speed, snowfall, rainfall), bins=bins, color="c", label="Real")
+	plt.hist(weather_transaction_probability(sim_wind_chill, sim_wind_speed, sim_snowfall, sim_rainfall), bins=bins, color="k", alpha=0.7, label="Simulated")
+	plt.xlabel("Occurrences (Days)", fontsize=16)
+	plt.ylabel("Probability", fontsize=16)
+	plt.xlim([0.0, 1.0])
+	plt.grid(True)
+	plt.legend(loc="upper left")
 	plt.savefig(flname, DPI=300)
 
 data_dir = sys.argv[1]
@@ -362,7 +383,7 @@ sim_temps =  simulate_temp(avg, std, 1.0, len(temps), fourier_coeff)
 sim_vel = sim_temps[1:] - sim_temps[:len(sim_temps) - 1]
 
 precip = np.array([(snowfall, rainfall, total_precip) for t, _, snowfall, rainfall, total_precip, _ in sbn_data])
-sim_precip, sim_snowfall, sim_rainfall = simulate_precip(2.0 * np.average(precip[:, 2]), temps, precip.shape[0])
+sim_precip, sim_snowfall, sim_rainfall = simulate_precip(1.5 * np.average(precip[:, 2]), temps, precip.shape[0])
 
 wind_speeds = np.array([wind_speed for _, _, _, _, _, wind_speed in sbn_data])
 k = np.sqrt(np.var(wind_speeds))
@@ -408,5 +429,6 @@ plot_wind_chill_prob_hist(output_dir + "/wind_chill_trans_prob_hist.pdf", wind_c
 plot_wind_speed_trans_prob(output_dir + "/wind_speed_trans_prob.pdf")
 plot_hist_wind_speed_trans_prob(output_dir + "/wind_speed_trans_prob_hist.pdf", wind_speeds, sim_wind_speeds)
 
-plot_weather_probability(output_dir + "/weather_trans_prob.pdf", wind_chill, wind_speed, snowfall, rainfall)
+plot_weather_probability(output_dir + "/weather_trans_prob.pdf", wind_chill, wind_speeds, precip[:, 0], precip[:, 1], sim_wind_chill, sim_wind_speeds, sim_snowfall, sim_rainfall)
+plot_weather_prob_hist(output_dir + "/weather_trans_prob_hist.pdf", wind_chill, wind_speeds, precip[:, 0], precip[:, 1], sim_wind_chill, sim_wind_speeds, sim_snowfall, sim_rainfall)
 

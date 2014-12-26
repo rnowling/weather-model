@@ -62,8 +62,8 @@ def snowfall_transaction_probability(snowfall):
 	return quality(snowfall)
 
 def rainfall_transaction_probability(rainfall):
-	a = 10.0
-	b = 0.5 # inches
+	a = 7.5
+	b = 0.75 # inches
 	c = 0.4
 	quality = lambda s: 1.0 - (1.0 - c) / (1.0 + np.exp(-a * (s - b)))
 	return quality(rainfall)
@@ -77,8 +77,8 @@ def wind_chill_transaction_probability(wind_chill):
 
 def wind_speed_transaction_probability(wind_speed):
 	a = 0.8
-	b = 15.0 # mph
-	c = 0.4
+	b = 17.5 # mph
+	c = 0.5
 	prob = lambda s: 1.0 - (1.0 - c) / (1.0 + np.exp(-a * (s - b)))
 	return prob(wind_speed)
 
