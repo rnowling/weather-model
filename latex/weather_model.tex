@@ -54,7 +54,7 @@ Based on the observed properties, we propose a model combining a first-order Fou
 
 \begin{align}
 &T(t) = \frac{1}{2} a_0 + a_1 \sin\Big(\frac{-2.0 \pi t}{365}\Big) + a_2 \cos\Big(\frac{-2.0 \pi t}{365}\Big) + Z(t) \\
-&dZ_t = \theta (\mu - Z_t)dt + \sigma dW_t
+&dZ_t = \gamma (\mu - Z_t)dt + \sigma dW_t
 \end{align}
 
 \begin{table}[H]
@@ -67,7 +67,7 @@ Based on the observed properties, we propose a model combining a first-order Fou
   $a_1$ & Fourier coefficient \\ \hline
   $a_2$ & Fourier coefficient \\ \hline
   $Z_t$ & Ornstein-Uhlenbeck process \\ \hline
-  $\theta$ & Damping coefficient\\ \hline
+  $\gamma$ & Damping coefficient\\ \hline
   $\mu$ & long-term mean \\ \hline
   $\sigma^2$ & variance of the Wiener process \\ \hline
   $dW(t)$ & Weiner process \\ \hline 
@@ -81,7 +81,7 @@ In implementing the model, we made several decisions.  We determined the values 
 We chose to numerically integrate the Orstein-Uhlenbeck process $Z(t)$ using the Euler-Maruyama method:
 
 \begin{align}
-&Z_{t+1} = - \theta Z_t \Delta t + \sigma \sqrt{\Delta t} X_{t+1} \\
+&Z_{t+1} = - \gamma Z_t \Delta t + \sigma \sqrt{\Delta t} X_{t+1} \\
 &Z_0 = 0
 \end{align}
 
@@ -132,38 +132,42 @@ where $\Delta t$ is the time step (one day) and $X_t \sim N(0, \sigma^2)$.
 
 \subsection{Precipitation}
 
-\subsubsection{Analysis of Real Data}
-
+We observed that:
 \begin{enumerate}
 \item Precipitation is not correlated in time.  i.e., precipitation is independent day to day
-\item Frequencies follow an exponential distribution
-\item State (e.g., rain, snow) depends on temperature
+\item Distribution can be approximated with an exponential distribution
+\item State (e.g., rain, snow) depends on temperature.
 \end{enumerate}
 
-\subsubsection{Description of Model}
-
 Precipitation frequency follows an exponential distribution:
-\begin{equation}
-p(P_t | t) = \lambda \exp(-\lambda P_t)
-\end{equation}
+\begin{align}
+&P_t \sim Exp(\lambda) \\
+&r(T) = \frac{1}{1 + \exp(-a (T - b))} \\
+&S(t) = 10.0 \, (1 - r(T_t)) \, P_t \\
+&R(T) = r(T_t) \, P_t
+\end{align}
 
-Precipitation amounts for a given day are determined by sampling a value for $P_t$ from $p(P_t | t)$.  The precipitation is given as ``water equivalent,'' meaning the amount of liquid water.
+\begin{table}[H]
+  \centering
+  \begin{tabular}{c c} \hline
+  \emph{Variable} & \emph{Description} \\ \hline
+  $P_t$ & Precipitation \\ \hline
+  $r(T, P_t)$ & ratio of rain to snow \\ \hline
+  $S(t)$ & Snowfall (in) \\ \hline
+  $R(t)$ & Rainfall (in) \\ \hline
+  $\lambda$ & Inverse average \\ \hline
+  $a$ & Width of sigmoid \\ \hline
+  $b$ & Offset of sigmoid \\ \hline
+  \end{tabular}
+  \caption{Descriptions of variables in the model}
+  \label{tab:analysis-ft-values}
+\end{table}
+
+The precipitation is given as ``water equivalent,'' meaning the amount of liquid water.
 
 Snow-rain ratio is modeled by a logistic function $r(t)$ of the temperature:
 
-\begin{equation}
-r(T) = \frac{1}{1 + \exp(-a (T - b))}
-\end{equation}
-
 The amount of snowfall must be calculated from the precipitation $r_t$ and percentage of snowfall $r(T)$.  Assuming that snow has a density that is $1/10$ that of water, the amunt of snowfall is given by:
-
-\begin{equation}
-s(t) = 10.0 \, (1 - r(T_t)) \, P_t
-\end{equation}
-
-\subsubsection{Implementation of the Model}
-
-\subsubsection{Evaluation of Model}
 
 \begin{figure}[H]
   \centering
@@ -217,11 +221,7 @@ s(t) = 10.0 \, (1 - r(T_t)) \, P_t
   \caption{}
 \end{figure}
 
-\textcolor{red}{TODO autocorr, FFT, snowfall graph}
-
 \subsection{Wind}
-
-\subsubsection{Analysis of Raw Data}
 
 \begin{enumerate}
 \item The wind process is driven by two components: a single signal in the low-frequency regime with an amplitude $>$ the median amplitude while the other frequencies have amplitudes near the median (FFT).
@@ -229,10 +229,6 @@ s(t) = 10.0 \, (1 - r(T_t)) \, P_t
 \item The signals for the remaining frequencies are characterized by a stochastic process (autocorrelation).
 \item The derivative of the wind, which is dominated by the white noise, is normally (Gaussian) distributed (derivative value histogram).
 \end{enumerate}
-
-
-\subsubsection{Description of Model}
-Based on the properties observed in Section~\ref{sec:analysis}, we can derive a model.
 
 \begin{equation}
 V(t) = \frac{1}{2}b_0 + b_1 \sin\Big(\frac{-2.0 \pi t}{365}\Big) + b_2 \cos\Big(\frac{-2.0 \pi t}{365}\Big) + X_t
@@ -252,10 +248,6 @@ V(t) = \frac{1}{2}b_0 + b_1 \sin\Big(\frac{-2.0 \pi t}{365}\Big) + b_2 \cos\Big(
   \caption{Descriptions of variables in the model}
   \label{tab:analysis-ft-values}
 \end{table}
-
-\subsubsection{Implementation of the Model}
-
-\subsubsection{Evaluation of the Model}
 
 \begin{figure}[H]
   \centering
@@ -285,21 +277,39 @@ V(t) = \frac{1}{2}b_0 + b_1 \sin\Big(\frac{-2.0 \pi t}{365}\Big) + b_2 \cos\Big(
 \newpage
 \section{Proposed Modifications to Transaction and Purchasing Models}
 
-\subsection{Determination of Weather Quality}
+\subsection{Transaction Model}
 
-Need models to quantify ``quality'' of weather as a value in $[0, 1]$ where 1 indicates the best possible weather and 0 indicates the worst possible weather.  Weather quality could be modeled separately for temperature, snow fall, rain fall, and wind and combined using a ``min'' operator.   
+Assumptions:
+\begin{enumerate}
+\item The probability of customers going to the store on a particular day is decreased under bad weather conditions.
+\end{enumerate}
 
-Based on the weather quality for each day, we would need to model the probability of a customer going shopping given the weather conditions.
+Need models to quantify probability of a transaction given the weather as a value in $[0, 1]$ where 1 indicates the best possible weather and 0 indicates the worst possible weather.  Weather quality could be modeled separately for temperature, snow fall, rain fall, and wind and combined using a ``min'' operator.   
 
 \begin{equation}
-q_T(T) = \frac{1 - c}{1 + \exp(-a (T - b))} + c
+p_{WC}(\text{trans} | t_i, WC_t) = \frac{1 - c}{1 + \exp(-a (WC_t - b))} + c
 \end{equation}
 
 \begin{equation}
-q_s(s) = 1 - \frac{1 - c}{1 + \exp(-a (s - b))}
+p_S(\text{trans} | t_i, S_t) = 1 - \frac{1 - c}{1 + \exp(-a (S_t - b))}
 \end{equation}
 
+\begin{equation}
+p_R(\text{trans} | t_i, R_t) = 1 - \frac{1 - c}{1 + \exp(-a (R_t - b))}
+\end{equation}
 
+\begin{equation}
+p_V(\text{trans} | t_i, V_t) = 1 - \frac{1 - c}{1 + \exp(-a (V_t - b))}
+\end{equation}
+
+\begin{align}
+p_{\text{weather}}(\text{trans} | t_i, WC_T, V_t, S_t, R_t) = &\min \, \{ \, p_{WC}(\text{trans} | t, \, WC_t), p_V(\text{trans} | t, V_t), \\ 
+&p_S(\text{trans} | t, S_t), \, p_R(\text{trans} | t, R_t) \, \} \nonumber
+\end{align}
+
+\begin{equation}
+p(\text{trans} | t_i) = \frac{p_{\text{weather}}(\text{trans} | t_i, WC_T, V_t, S_t, R_t) \, p_{\text{exhaustion offset}}(\text{trans} | t_i) \, p_{\text{arrow of time}}(\text{trans} | t_i \geq t_{i-1})}{Z}
+\end{equation}
 
 \begin{figure}[H]
   \centering
@@ -361,31 +371,9 @@ q_s(s) = 1 - \frac{1 - c}{1 + \exp(-a (s - b))}
 \end{figure}
 
 
-
-\textcolor{red}{TODO quality vs day, total precipitation, windchill}
-
-\subsection{Transaction Model}
-
-\subsubsection{Review of Existing Model}
-
-\subsubsection{Proposed Changes to Model}
-
-Assumptions:
-\begin{enumerate}
-\item The probability of customers going to the store on a particular day is decreased under bad weather conditions.
-\end{enumerate}
-
-\begin{equation}
-p(\text{trans} | t_i) = \frac{p_(\text{trans} | t_i, \text{weather}) \, p_{\text{exhaustion offset}}(\text{trans} | t_i) \, p_{\text{arrow of time}}(\text{trans} | t_i \geq t_{i-1})}{Z}
-\end{equation}
-
-\subsubsection{Evaluation of Changes}
-
 \subsection{Purchasing Model}
 
-\subsubsection{Review of Existing Model}
 
-\subsubsection{Proposed Changes to Model}
 
 Assumptions:
 \begin{enumerate}
@@ -398,7 +386,6 @@ Ideas:
 \item Increase preferences for larger sizes
 \end{enumerate}
 
-\subsubsection{Evaluation of Changes}
 
 \section{Conclusion}
 
