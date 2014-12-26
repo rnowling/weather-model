@@ -42,51 +42,18 @@ Of course, to incorporate the effects of weather into the model, we first need w
 \section{Local Weather Model}
 
 \subsection{Data Sources and File Formats}
-\textcolor{red}{NOAA C}
+\textcolor{red}{NOAA QCLCD}
 
 \subsection{Temperature}
-\subsubsection{Analysis of Real Data} \label{sec:analysis}
-To build a model, we need to a set of assumptions governing the behavior of the model.  By analyzing the existing data, we can infer patterns to inform our assumptions.  For the analysis, we'll use the average daily temperatures from South Bend, IN between October, 2011 to October, 2014.
+To build a model, we need to a make assumptions governing the behavior of the model.  By analyzing the existing data, we can infer patterns to inform our assumptions.  For the analysis, we'll use the average daily temperatures from South Bend, IN between October, 2011 to September, 2014.
 
-The average daily temperatures are plotted in Figure~\ref{fig:analysis-raw}. We can make a few immediate observations.  First, the temperatures are between -6$^{\circ}$ F and 90$^{\circ}$ F with an average temperature of 50.7$^{\circ}$ F.  Secondly, the temperatures seem to be governed by multiple frequencies, in particular high-frequency components related to daily variations in temperature and low-frequency components related to seasonal variations.  The low-frequency component seems to be periodic and determinstic, while the high-frequency component seems to be stochastic.
-
-The frequency spectra of the temperatures was computed using a Fourier Transform and is plotted in Figure~\ref{fig:analyis-ft}.  The frequency spectra is characterized by a low-frequency signal with a period of 363.3 days and a high amplitude of 23.9 $^{\circ}$ F, a few other low-frequency signals with periods of 1090.0, 545.0, and 272.5 days with higher-than-average amplitudes (2.1 - 3.4 $^{\circ}$ F), and the remaining signals with amplitudes that are somewhat uniformally-distributed (see Table~\ref{tab:analysis-ft-values}).  The high-amplitude, low-frequency signals correspond to the seasonal change we observed in the raw data.  The uniform-amplitude signals are indicative of ``white'' noise which spans all frequencies. 
-
-The autocorrelation of the daily temperatures is given in Figure~\ref{fig:analyis-autocorr}.  The autocorrelation indicates a periodic correlation with a period of approximately a year, which agrees with our observation of a high-amplitude signal with a period of 363.3 days.  The low levels of correlation for small lag times ($<$ days), is indicative of ``white noise,'' which is not be correlated in time. The tendency for the correlation to increase as the time lag increases is likely to be due to the dominance of the low-frequency deterministic component over the all-frequency stochastic noise.
-
-This suggests we may be able to model the temperatures using a low-frequency determistic component plus a ``white''-noise stochastic process.
-
-\begin{table}[H]
-  \centering
-  \begin{tabular}{c c c c} \hline
-  \emph{Frequency (cylces/day)} & \emph{Period(days)} & \emph{Coefficients ($^{\circ}$ F)} & \emph{Amplitudes ($^{\circ}$ F)}\\ \hline
-  0.0009 & 1090.0 & $0.4375-3.3216i$ & 3.3503 \\ \hline
-  0.0018 & 545.0 & $-0.2102-2.0662i$ & 2.0770 \\ \hline
-  0.0028 & 363.3 & $7.8294+22.6238i$ & 23.9402 \\ \hline
-  0.0037 & 272.5 & $-2.7955+1.1398i$ & 3.0190 \\ \hline
-  0.0046 & 218.0 & $-0.9682-1.2431i$ & 1.5757 \\ \hline
-  \end{tabular}
-  \caption{}
-  \label{tab:analysis-ft-values}
-\end{table}
-
-\textcolor{red}{TODO: velocities}
-
-\begin{enumerate}
-\item The temperature process is driven by two components: 3-4 signals in the low-frequency regime with amplitudes $>$ than the median amplitude while the other frequencies have amplitudes near the median (FFT).
-\item The low-frequency signals are deterministic and sinosidal (autcorrelation).
-\item The signals for the remaining frequencies are characterized by a stochastic process (autocorrelation).
-\item The derivative of the temperature is normally (Gaussian) distributed (derivative value histogram).
-\item The stochastic process appears to be bounded.
-\end{enumerate}
+The average daily temperatures are plotted in Figure~\ref{fig:analysis-raw}. The temperatures seem to be governed by multiple frequencies, in particular high-frequency components related to daily variations in temperature and low-frequency components related to seasonal variations.   The frequency spectra of the autocorrelation of the temperatures is plotted in Figure~\ref{fig:analyis-ft}.  The frequency spectra is dominated by a low-frequency signal with a period of 363.3 days. The high-amplitude, low-frequency signals correspond to the seasonal change we observed in the raw data.  The changes in temperature over time (derivative) (Figure~\ref{fig:analysis-autocorr}) appear to follow a normal distribution.
 
 
-
-\subsubsection{Description of Model}
-Based on the properties observed in Section~\ref{sec:analysis}, we can derive a model combining a Fourier series for the low-frequency components and an Orstein-Uhlenbeck process for the noise.
+Based on the observed properties, we propose a model combining a first-order Fourier series with a period of 365 days for the low-frequency components and an Orstein-Uhlenbeck process for the noise.
 
 \begin{align}
-&\tilde{T}(t) = \frac{1}{2}a_0 + \sum_{n=1}^k a_n \sin\Big(\frac{-2.0 \pi n}{P}\Big) + b_n \cos\Big(\frac{-2.0 \pi n}{P}\Big) + Z(t) \\
+&T(t) = \frac{1}{2} a_0 + a_1 \sin\Big(\frac{-2.0 \pi t}{365}\Big) + a_2 \cos\Big(\frac{-2.0 \pi t}{365}\Big) + Z(t) \\
 &dZ_t = \theta (\mu - Z_t)dt + \sigma dW_t
 \end{align}
 
@@ -94,15 +61,13 @@ Based on the properties observed in Section~\ref{sec:analysis}, we can derive a 
   \centering
   \begin{tabular}{c c} \hline
   \emph{Variable} & \emph{Description}\\ \hline
-  $\tilde{T}$ & Simulated temperature \\ \hline
+  $T(t)$ & Simulated temperature \\ \hline
   $t$ & time \\ \hline
-  $k$ & Order of Fourier Series \\ \hline
-  $a_0$ & average temperature \\ \hline
-  $a_n$ & \\ \hline
-  $b_n$ &  \\ \hline
-  $P$ & period  \\ \hline
+  $a_0$ & Fourier coefficient \\ \hline
+  $a_1$ & Fourier coefficient \\ \hline
+  $a_2$ & Fourier coefficient \\ \hline
   $Z_t$ & Ornstein-Uhlenbeck process \\ \hline
-  $\theta$ & \\ \hline
+  $\theta$ & Damping coefficient\\ \hline
   $\mu$ & long-term mean \\ \hline
   $\sigma^2$ & variance of the Wiener process \\ \hline
   $dW(t)$ & Weiner process \\ \hline 
@@ -111,9 +76,7 @@ Based on the properties observed in Section~\ref{sec:analysis}, we can derive a 
   \label{tab:analysis-ft-values}
 \end{table}
 
-
-\subsubsection{Implementation of the Model}
-In implementing the model, we made several decisions.  We decided to use only one Fourier term ($k=1$) with a period $P$ of 365.0 days.  We determined the values of the coefficients $a_0$, $a_1$, and $b_1$ from a Fourier Transform of the real data.  We set the long-term mean $\mu$ to 0 and determined the variance $\sigma^2$ from the distribution of the derivative of the real temperature data.
+In implementing the model, we made several decisions.  We determined the values of the coefficients $a_0$, $a_1$, and $b_1$ from a Fourier Transform of the real data.  We set the long-term mean $\mu$ to 0 and determined the variance $\sigma^2$ from the distribution of the derivative values of the real temperature data.
 
 We chose to numerically integrate the Orstein-Uhlenbeck process $Z(t)$ using the Euler-Maruyama method:
 
@@ -123,8 +86,6 @@ We chose to numerically integrate the Orstein-Uhlenbeck process $Z(t)$ using the
 \end{align}
 
 where $\Delta t$ is the time step (one day) and $X_t \sim N(0, \sigma^2)$.
-
-\subsubsection{Evaluation of Model}
 
 \begin{figure}[H]
   \centering
@@ -168,8 +129,6 @@ where $\Delta t$ is the time step (one day) and $X_t \sim N(0, \sigma^2)$.
   \label{fig:analysis}
   \caption{}
 \end{figure}
-
-\textcolor{red}{TODO graph of temp histogram}
 
 \subsection{Precipitation}
 
@@ -276,20 +235,19 @@ s(t) = 10.0 \, (1 - r(T_t)) \, P_t
 Based on the properties observed in Section~\ref{sec:analysis}, we can derive a model.
 
 \begin{equation}
-\tilde{W}(t) = \frac{1}{2}a_0 + a \sin\Big(\frac{-2.0 \pi n}{P}\Big) + b \cos\Big(\frac{-2.0 \pi n}{P}\Big) + X_t
+V(t) = \frac{1}{2}b_0 + b_1 \sin\Big(\frac{-2.0 \pi t}{365}\Big) + b_2 \cos\Big(\frac{-2.0 \pi t}{365}\Big) + X_t
 \end{equation}
 
 \begin{table}[H]
   \centering
   \begin{tabular}{c c} \hline
   \emph{Variable} & \emph{Description}\\ \hline
-  $\tilde{W}$ & Simulated wind speed \\ \hline
+  $V(t)$ & Simulated wind speed \\ \hline
   $t$ & time \\ \hline
-  $a_0$ & average wind speed \\ \hline
-  $a$ & \\ \hline
-  $b$ &  \\ \hline
-  $P$ & period  \\ \hline
-  $X_t$ & $X_t \sim$ Erlang distribution \\ \hline 
+  $b_0$ & average wind speed \\ \hline
+  $b_1$ & Fourier coefficient \\ \hline
+  $b_2$ & Fourier coefficient \\ \hline
+  $X_t$ & $X_t \sim Erlang(k, \theta)$ \\ \hline 
   \end{tabular}
   \caption{Descriptions of variables in the model}
   \label{tab:analysis-ft-values}
