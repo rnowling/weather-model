@@ -67,8 +67,9 @@ def plot_vel(flname, vel):
 def plot_hist_sim_vel(flname, vel, sim_vel):
 	plt.clf()
 	plt.hold(True)
-	plt.hist(vel, color="c", label="Real")
-	plt.hist(sim_vel, color="k", label="Simulated", alpha=0.7)
+	bins = np.linspace(-40.0, 40.0, 40.0)
+	plt.hist(vel, bins=bins, color="c", label="Real")
+	plt.hist(sim_vel, bins=bins, color="k", label="Simulated", alpha=0.7)
 	plt.ylabel("Occurrences (Days)", fontsize=16)
 	plt.xlabel("dT/dt (F)", fontsize=16)
 	plt.legend()
@@ -88,8 +89,9 @@ def plot_sim_temps(flname, temps, sim_temps):
 def hist_temps(flname, temps, sim_temps):
 	plt.clf()
 	plt.hold(True)
-	plt.hist(temps, bins=50, color="c", label="Real")
-	plt.hist(sim_temps, bins=50, color="k", alpha=0.7, label="Simulated")
+	bins = np.linspace(-20.0, 100.0, 30.0)
+	plt.hist(temps, bins=bins, color="c", label="Real")
+	plt.hist(sim_temps, bins=bins, color="k", alpha=0.7, label="Simulated")
 	plt.ylabel("Occurrences (Days)", fontsize=16)
 	plt.xlabel("Temperature (F)", fontsize=16)
 	plt.legend(loc="upper right")
@@ -283,10 +285,11 @@ def plot_hist_wind_speed(flname, wind_speed, sim_wind_speed=None):
 	plt.clf()
 	plt.hold(True)
 
-	plt.hist(wind_speed, bins=30, color="c", alpha=0.7, label="Real")
+	bins = np.linspace(0.0, 30.0, 30.0)
 
+	plt.hist(wind_speed, bins=bins, color="c", alpha=0.7, label="Real")
 	if sim_wind_speed != None:
-		plt.hist(sim_wind_speed, bins=30, color="k", alpha=0.7, label="Simulated")
+		plt.hist(sim_wind_speed, bins=bins, color="k", alpha=0.7, label="Simulated")
 
 	plt.ylabel("Occurrences (Days)", fontsize=16)
 	plt.xlabel("Wind Speed (mph)", fontsize=16)
@@ -327,8 +330,8 @@ def plot_hist_wind_speed_trans_prob(flname, wind_speed, sim_wind_speed):
 	plt.hold(True)
 
 	bins = np.linspace(0.0, 1.0, 20.0)
-	plt.hist(wind_speed_transaction_probability(wind_speed), bins=bins, color="c", alpha=0.7, label="Real")
 	plt.hist(wind_speed_transaction_probability(sim_wind_speed), bins=bins, color="k", alpha=0.7, label="Simulated")
+	plt.hist(wind_speed_transaction_probability(wind_speed), bins=bins, color="c", alpha=0.7, label="Real")
 
 	plt.ylabel("Days (Frequency)", fontsize=16)
 	plt.xlabel("Probability", fontsize=16)
@@ -375,7 +378,7 @@ temps = np.array([temp for (t, temp, _, _, _, _) in sbn_data])
 vel = temps[1:] - temps[:len(temps) - 1]
 
 #avg = np.average(temps)
-std = 1.25 * np.std(vel)
+std = np.std(vel)
 freq, ampl, coeff = fft(temps)
 fourier_coeff = coeff[3]
 avg = 0.5 * np.abs(coeff)[0]
